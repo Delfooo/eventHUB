@@ -1,9 +1,9 @@
 const config = {
   // Database
-  mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/eventhub',
+  mongoUri: process.env.MONGODB_URI || 'mongodb+srv://michelangelodelfino_db_user:Jb2xqY6rtKySzhLL@eventhub.05x1kum.mongodb.net/eventhub?appName=eventHub',
   
   // JWT
-  jwtSecret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production',
+  jwtSecret: process.env.JWT_SECRET || 'your-super-secret-jwt-key',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   
   // Server

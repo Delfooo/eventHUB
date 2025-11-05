@@ -3,7 +3,7 @@ const Event = require('../models/Event');
 const { io } = require('../socket');
 
 // Ottieni profilo utente corrente
-const getProfile = async (req, res) => {
+exports.getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id, '-password');
     
@@ -27,7 +27,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-const reportEvent = async (req, res) => {
+exports.reportEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -56,7 +56,7 @@ const reportEvent = async (req, res) => {
 };
 
 // Aggiorna profilo utente
-const updateProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
     const { username, email } = req.body;
     
@@ -126,7 +126,7 @@ const updateProfile = async (req, res) => {
 };
 
 // Cambia password
-const changePassword = async (req, res) => {
+exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
@@ -173,7 +173,7 @@ const changePassword = async (req, res) => {
 };
 
 // Crea evento (placeholder - da implementare con modello Event)
-const createEvent = async (req, res) => {
+exports.createEvent = async (req, res) => {
   try {
     const { title, description, date, location, capacity, image, category } = req.body;
 
@@ -215,7 +215,7 @@ const createEvent = async (req, res) => {
 };
 
 // Iscriviti a evento (placeholder - da implementare)
-const joinEvent = async (req, res) => {
+exports.joinEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user._id;
@@ -247,7 +247,7 @@ const joinEvent = async (req, res) => {
   }
 };
 
-const leaveEvent = async (req, res) => {
+exports.leaveEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user._id;
@@ -274,7 +274,7 @@ const leaveEvent = async (req, res) => {
   }
 };
 
-const updateEvent = async (req, res) => {
+exports.updateEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { title, description, date, location, capacity, image, category } = req.body;
@@ -308,7 +308,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
-const deleteEvent = async (req, res) => {
+exports.deleteEvent = async (req, res) => {
   try {
     const { eventId } = req.params;
 
@@ -332,7 +332,7 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-const getMyEvents = async (req, res) => {
+exports.getMyEvents = async (req, res) => {
   try {
     const userId = req.user._id;
 
@@ -350,7 +350,7 @@ const getMyEvents = async (req, res) => {
   }
 };
 
-const getPublicEvents = async (req, res) => {
+exports.getPublicEvents = async (req, res) => {
   try {
     const { date, category, location } = req.query;
     let filter = {};
@@ -378,7 +378,7 @@ const getPublicEvents = async (req, res) => {
   }
 };
 
-const addChatMessage = async (req, res) => {
+exports.addChatMessage = async (req, res) => {
   try {
     const { eventId } = req.params;
     const { message } = req.body;
@@ -409,7 +409,7 @@ const addChatMessage = async (req, res) => {
   }
 };
 
-const getChatMessages = async (req, res) => {
+exports.getChatMessages = async (req, res) => {
   try {
     const { eventId } = req.params;
     const userId = req.user._id;
@@ -430,19 +430,5 @@ const getChatMessages = async (req, res) => {
     console.error('Errore nel recupero dei messaggi della chat:', error);
     res.status(500).json({ success: false, message: 'Errore nel recupero dei messaggi della chat', error: error.message });
   }
-};
-
-module.exports = {
-  getProfile,
-  updateProfile,
-  changePassword,
-  createEvent,
-  joinEvent,
-  getMyEvents,
-  updateEvent,
-  deleteEvent,
-  getPublicEvents,
-  addChatMessage,
-  getChatMessages,
   reportEvent
 };

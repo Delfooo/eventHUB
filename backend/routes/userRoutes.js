@@ -2,17 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middlewares/authMiddleware');
 const { requireAnyRole } = require('../middlewares/roleMiddleware');
-const {
-  getProfile,
-  updateProfile,
-  changePassword,
-  createEvent,
-  joinEvent,
-  getMyEvents,
-  updateEvent,
-  deleteEvent,
-  getPublicEvents
-} = require('../controllers/userController');
+const { getProfile, reportEvent, updateProfile, changePassword, createEvent, joinEvent, leaveEvent, updateEvent, deleteEvent, getMyEvents, getPublicEvents, addChatMessage, getChatMessages } = require('../controllers/userController');
 
 /**
  * @route   GET /api/user/public-events
@@ -31,50 +21,49 @@ router.use(authenticate);
  * @desc    Ottieni profilo utente corrente
  * @access  Private
  */
-router.get('/profile', getProfile);
+router.get('/profile', authenticate, getProfile);
 
 /**
  * @route   PUT /api/user/profile
  * @desc    Aggiorna profilo utente
  * @access  Private
  */
-router.put('/profile', updateProfile);
+router.put('/profile', authenticate, updateProfile);
 
 /**
  * @route   PATCH /api/user/password
  * @desc    Cambia password
  * @access  Private
  */
-router.patch('/password', changePassword);
+router.put('/change-password', authenticate, changePassword);
 
 /**
  * @route   POST /api/user/events
  * @desc    Crea nuovo evento
  * @access  Private (User/Admin)
  */
-router.post('/events', requireAnyRole('user', 'admin'), createEvent);
+router.post('/events', authenticate, requireAnyRole('admin'), createEvent);
 
 /**
  * @route   PUT /api/user/events/:eventId
  * @desc    Aggiorna un evento esistente
  * @access  Private (Solo il proprietario dell'evento)
  */
-router.put('/events/:eventId', requireAnyRole('user', 'admin'), updateEvent);
+router.put('/events/:eventId', authenticate, requireAnyRole('admin'), updateEvent);
 
 /**
  * @route   DELETE /api/user/events/:eventId
  * @desc    Elimina un evento esistente
  * @access  Private (Solo il proprietario dell'evento)
  */
-router.delete('/events/:eventId', requireAnyRole('user', 'admin'), deleteEvent);
+router.delete('/events/:eventId', authenticate, requireAnyRole('admin'), deleteEvent);
 
 /**
  * @route   POST /api/user/events/:eventId/join
  * @desc    Iscriviti a evento
  * @access  Private (User/Admin)
  */
-router.post('/events/:eventId/join', requireAnyRole('user', 'admin'), joinEvent);
-
+router.post('/events/:eventId/join', authenticate, requireAnyRole('user', 'admin'), joinEvent);
 /**
  * @route   POST /api/user/events/:eventId/leave
  * @desc    Annulla iscrizione a evento
