@@ -8,8 +8,19 @@ const {
   changePassword,
   createEvent,
   joinEvent,
-  getMyEvents
+  getMyEvents,
+  updateEvent,
+  deleteEvent,
+  getPublicEvents
 } = require('../controllers/userController');
+
+/**
+ * @route   GET /api/user/public-events
+ * @desc    Ottieni lista eventi pubblici con filtri
+ * @access  Public
+ */
+router.get('/events/me', authenticate, getMyEvents);
+router.get('/public-events', getPublicEvents);
 
 // Tutte le routes richiedono autenticazione (sia user che admin possono accedere)
 router.use(authenticate);
@@ -43,11 +54,32 @@ router.patch('/password', changePassword);
 router.post('/events', requireAnyRole('user', 'admin'), createEvent);
 
 /**
+ * @route   PUT /api/user/events/:eventId
+ * @desc    Aggiorna un evento esistente
+ * @access  Private (Solo il proprietario dell'evento)
+ */
+router.put('/events/:eventId', requireAnyRole('user', 'admin'), updateEvent);
+
+/**
+ * @route   DELETE /api/user/events/:eventId
+ * @desc    Elimina un evento esistente
+ * @access  Private (Solo il proprietario dell'evento)
+ */
+router.delete('/events/:eventId', requireAnyRole('user', 'admin'), deleteEvent);
+
+/**
  * @route   POST /api/user/events/:eventId/join
  * @desc    Iscriviti a evento
  * @access  Private (User/Admin)
  */
 router.post('/events/:eventId/join', requireAnyRole('user', 'admin'), joinEvent);
+
+/**
+ * @route   POST /api/user/events/:eventId/leave
+ * @desc    Annulla iscrizione a evento
+ * @access  Private (User/Admin)
+ */
+router.post('/events/:eventId/leave', requireAnyRole('user', 'admin'), leaveEvent);
 
 /**
  * @route   GET /api/user/events

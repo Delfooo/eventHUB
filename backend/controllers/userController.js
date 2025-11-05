@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Event = require('../models/Event');
 
 // Ottieni profilo utente corrente
 const getProfile = async (req, res) => {
@@ -38,7 +39,7 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Controlla se username/email sono già in uso
+    // Controlla se username/email sono gia in uso
     const updates = {};
     if (username) {
       const existingUsername = await User.findOne({ 
@@ -48,7 +49,7 @@ const updateProfile = async (req, res) => {
       if (existingUsername) {
         return res.status(400).json({
           success: false,
-          message: 'Username già in uso'
+          message: 'Username gia in uso'
         });
       }
       updates.username = username.trim();
@@ -69,7 +70,7 @@ const updateProfile = async (req, res) => {
       if (existingEmail) {
         return res.status(400).json({
           success: false,
-          message: 'Email già in uso'
+          message: 'Email gia in uso'
         });
       }
       updates.email = email.toLowerCase().trim();
@@ -87,10 +88,10 @@ const updateProfile = async (req, res) => {
       user: updatedUser
     });
   } catch (error) {
-    console.error('Errore nell\'aggiornamento profilo:', error);
+    console.error('Errore nell aggiornamento profilo:', error);
     res.status(500).json({
       success: false,
-      message: 'Errore nell\'aggiornamento del profilo'
+      message: 'Errore nell aggiornamento del profilo'
     });
   }
 };
@@ -145,18 +146,41 @@ const changePassword = async (req, res) => {
 // Crea evento (placeholder - da implementare con modello Event)
 const createEvent = async (req, res) => {
   try {
-    // Placeholder per creazione evento
-    // Quando avrai il modello Event, implementerai qui la logica
-    
-    res.status(501).json({
-      success: false,
-      message: 'Funzionalità creazione evento in arrivo...'
+    const { title, description, date, location, capacity, image, category } = req.body;
+
+    // Validazione input
+    if (!title || !description || !date || !location || !capacity || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tutti i campi obbligatori (titolo, descrizione, data, luogo, capienza, categoria) sono richiesti'
+      });
+    }
+
+    // Crea nuovo evento
+    const newEvent = new Event({
+      title,
+      description,
+      date,
+      location,
+      capacity,
+      image,
+      category,
+      owner: req.user._id // L ID dell utente autenticato e l owner dell evento
+    });
+
+    await newEvent.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Evento creato con successo!',
+      event: newEvent
     });
   } catch (error) {
     console.error('Errore nella creazione evento:', error);
     res.status(500).json({
       success: false,
-      message: 'Errore nella creazione dell\'evento'
+      message: 'Errore nella creazione dell\'evento',
+      error: error.message
     });
   }
 };
@@ -164,36 +188,160 @@ const createEvent = async (req, res) => {
 // Iscriviti a evento (placeholder - da implementare)
 const joinEvent = async (req, res) => {
   try {
-    // Placeholder per iscrizione evento
-    
-    res.status(501).json({
-      success: false,
-      message: 'Funzionalità iscrizione evento in arrivo...'
-    });
+    const { eventId } = req.params;
+    const userId = req.user._id;
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Evento non trovato' });
+    }
+
+    // Controlla se l utente e gia iscritto
+    if (event.attendees.includes(userId)) {
+      return res.status(400).json({ success: false, message: 'Sei gia iscritto a questo evento' });
+    }
+
+    // Controlla la capienza
+    if (event.attendees.length >= event.capacity) {
+      return res.status(400).json({ success: false, message: 'Capienza massima raggiunta per questo evento' });
+    }
+
+    event.attendees.push(userId);
+    await event.save();
+
+    res.status(200).json({ success: true, message: 'Iscrizione all evento avvenuta con successo' });
   } catch (error) {
-    console.error('Errore nell\'iscrizione evento:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Errore nell\'iscrizione all\'evento'
-    });
+    console.error('Errore nell iscrizione all evento:', error);
+    res.status(500).json({ success: false, message: 'Errore nell iscrizione all evento', error: error.message });
   }
 };
 
-// Ottieni eventi a cui l'utente è iscritto (placeholder)
+const leaveEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user._id;
+
+    const event = await Event.findById(eventId);
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Evento non trovato' });
+    }
+
+    // Controlla se l utente non e iscritto
+    if (!event.attendees.includes(userId)) {
+      return res.status(400).json({ success: false, message: 'Non sei iscritto a questo evento' });
+    }
+
+    event.attendees = event.attendees.filter(attendee => attendee.toString() !== userId.toString());
+    await event.save();
+
+    res.status(200).json({ success: true, message: 'Disiscrizione dall evento avvenuta con successo' });
+  } catch (error) {
+    console.error('Errore nella disiscrizione dall evento:', error);
+    res.status(500).json({ success: false, message: 'Errore nella disiscrizione dall evento', error: error.message });
+  }
+};
+
+const updateEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { title, description, date, location, capacity, image, category } = req.body;
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Evento non trovato' });
+    }
+
+    // Verifica se l utente autenticato e il proprietario dell evento
+    if (event.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Non autorizzato a modificare questo evento' });
+    }
+
+    // Aggiorna i campi dell evento
+    event.title = title || event.title;
+    event.description = description || event.description;
+    event.date = date || event.date;
+    event.location = location || event.location;
+    event.capacity = capacity || event.capacity;
+    event.image = image || event.image;
+    event.category = category || event.category;
+
+    await event.save();
+
+    res.status(200).json({ success: true, message: 'Evento aggiornato con successo', event });
+  } catch (error) {
+    console.error('Errore nell aggiornamento evento:', error);
+    res.status(500).json({ success: false, message: 'Errore nell aggiornamento dell evento', error: error.message });
+  }
+};
+
+const deleteEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    const event = await Event.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({ success: false, message: 'Evento non trovato' });
+    }
+
+    // Verifica se l utente autenticato e il proprietario dell evento
+    if (event.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'Non autorizzato a eliminare questo evento' });
+    }
+
+    await event.deleteOne();
+
+    res.status(200).json({ success: true, message: 'Evento eliminato con successo' });
+  } catch (error) {
+    console.error('Errore nell eliminazione evento:', error);
+    res.status(500).json({ success: false, message: 'Errore nell eliminazione dell evento', error: error.message }); 
+  }
+};
+
 const getMyEvents = async (req, res) => {
   try {
-    // Placeholder per lista eventi utente
-    
-    res.status(501).json({
-      success: false,
-      message: 'Funzionalità lista eventi in arrivo...'
-    });
+    const userId = req.user._id;
+
+    const events = await Event.find({
+      $or: [
+        { owner: userId }, // Eventi creati dall utente
+        { attendees: userId } // Eventi a cui l utente e iscritto
+      ]
+    }).populate('owner', 'username email').populate('attendees', 'username email');
+
+    res.status(200).json({ success: true, events });
   } catch (error) {
-    console.error('Errore nel recupero eventi:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Errore nel recupero degli eventi'
-    });
+    console.error('Errore nel recupero degli eventi dell utente:', error);
+    res.status(500).json({ success: false, message: 'Errore nel recupero degli eventi dell utente', error: error.message });
+  }
+};
+
+const getPublicEvents = async (req, res) => {
+  try {
+    const { date, category, location } = req.query;
+    let filter = {};
+
+    if (date) {
+      // Filtra per data (es. eventi a partire da una certa data)
+      filter.date = { $gte: new Date(date) };
+    }
+    if (category) {
+      filter.category = new RegExp(category, 'i'); // Ricerca case-insensitive
+    }
+    if (location) {
+      filter.location = new RegExp(location, 'i'); // Ricerca case-insensitive
+    }
+
+    const events = await Event.find(filter)
+      .populate('owner', 'username email')
+      .populate('attendees', 'username email')
+      .sort('date'); // Ordina per data
+
+    res.status(200).json({ success: true, events });
+  } catch (error) {
+    console.error('Errore nel recupero degli eventi pubblici:', error);
+    res.status(500).json({ success: false, message: 'Errore nel recupero degli eventi pubblici.', error: error.message });
   }
 };
 
@@ -203,5 +351,8 @@ module.exports = {
   changePassword,
   createEvent,
   joinEvent,
-  getMyEvents
+  getMyEvents,
+  updateEvent,
+  deleteEvent,
+  getPublicEvents
 };
