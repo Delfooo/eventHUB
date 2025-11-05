@@ -52,9 +52,33 @@ const eventSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  chatMessages: [{
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  reported: {
+    type: Boolean,
+    default: false
+  },
+  reportCount: {
+    type: Number,
+    default: 0
   }
 });
 

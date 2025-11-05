@@ -1,13 +1,12 @@
+dotenv.config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const config = require('./config/config');
-
-// Carica variabili di ambiente
-dotenv.config();
-
 const app = express();
+const initSocket = require('./socket');
+const { httpServer, io } = initSocket(app);
 
 // Middleware
 app.use(cors({
@@ -102,7 +101,7 @@ mongoose.connect(config.mongoUri, {
   
   // Avvia server
   const PORT = config.port;
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`🚀 Server avviato su porta ${PORT}`);
     console.log(`📍 Ambiente: ${config.nodeEnv}`);
     console.log(`🌐 CORS abilitato per: ${config.corsOrigin}`);
@@ -113,4 +112,4 @@ mongoose.connect(config.mongoUri, {
   process.exit(1);
 });
 
-module.exports = app;
+module.exports = { app, io };

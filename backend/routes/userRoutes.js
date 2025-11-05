@@ -19,7 +19,8 @@ const {
  * @desc    Ottieni lista eventi pubblici con filtri
  * @access  Public
  */
-router.get('/events/me', authenticate, getMyEvents);
+router.post('/events/:eventId/chat', authenticate, requireAnyRole('user', 'admin'), addChatMessage);
+router.post('/events/:eventId/report', authenticate, requireAnyRole('user', 'admin'), reportEvent);
 router.get('/public-events', getPublicEvents);
 
 // Tutte le routes richiedono autenticazione (sia user che admin possono accedere)
