@@ -2,7 +2,21 @@ const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middlewares/authMiddleware');
 const { requireAnyRole } = require('../middlewares/roleMiddleware');
-const { getProfile, reportEvent, updateProfile, changePassword, createEvent, joinEvent, leaveEvent, updateEvent, deleteEvent, getMyEvents, getPublicEvents, addChatMessage, getChatMessages } = require('../controllers/userController');
+const { getProfile, reportEvent, updateProfile, changePassword, createEvent, joinEvent, leaveEvent, updateEvent, deleteEvent, getMyEvents, getPublicEvents, addChatMessage, getChatMessages, forgotPassword, resetPassword } = require('../controllers/userController');
+
+/**
+ * @route   POST /api/user/forgot-password
+ * @desc    Richiede il reset della password inviando un'email
+ * @access  Public
+ */
+router.post('/forgot-password', forgotPassword);
+
+/**
+ * @route   POST /api/user/reset-password/:token
+ * @desc    Resetta la password con il token ricevuto via email
+ * @access  Public
+ */
+router.post('/reset-password/:token', resetPassword);
 
 /**
  * @route   GET /api/user/public-events
