@@ -4,14 +4,15 @@ dotenv.config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const config = require('./config/config');
+const configDB = require('./config/configDB');
+const configJWT = require('./config/configJWT');
 const app = express();
 const initSocket = require('./socket');
 const { httpServer, io } = initSocket(app);
 
 // Middleware
 app.use(cors({
-  origin: config.corsOrigin,
+  origin: configDB.corsOrigin,
   credentials: true
 }));
 
@@ -88,12 +89,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ 
     success: false, 
     message: 'Errore del server',
-    error: config.nodeEnv === 'development' ? err.message : undefined
+    error: configDB.nodeEnv === 'development' ? err.message : undefined
   });
 });
 
 // Connetti a MongoDB
-mongoose.connect(config.mongoUri, {
+mongoose.connect(configDB.mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -101,11 +102,11 @@ mongoose.connect(config.mongoUri, {
   console.log('✅ Connesso a MongoDB');
   
   // Avvia server
-  const PORT = config.port;
+  const PORT = configDB.port;
   httpServer.listen(PORT, () => {
     console.log(`🚀 Server avviato su porta ${PORT}`);
-    console.log(`📍 Ambiente: ${config.nodeEnv}`);
-    console.log(`🌐 CORS abilitato per: ${config.corsOrigin}`);
+    console.log(`📍 Ambiente: ${configDB.nodeEnv}`);
+    console.log(`🌐 CORS abilitato per: ${configDB.corsOrigin}`);
   });
 })
 .catch((error) => {

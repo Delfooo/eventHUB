@@ -21,7 +21,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Blocca/Sblocca utente
 const toggleUserBlock = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -118,9 +117,9 @@ const promoteToAdmin = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Errore nella promozione a amministratore'
-    });
-  }
-};
+      });
+    }
+  };
 
 // Degrada admin a user
 const demoteToUser = async (req, res) => {
@@ -171,47 +170,9 @@ const demoteToUser = async (req, res) => {
   }
 };
 
-// Dashboard admin - statistiche
-const getAdminStats = async (req, res) => {
-  try {
-    const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ isActive: true });
-    const blockedUsers = await User.countDocuments({ isActive: false });
-    const adminUsers = await User.countDocuments({ role: 'admin' });
-    const regularUsers = await User.countDocuments({ role: 'user' });
-
-    // Utenti registrati negli ultimi 30 giorni
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const recentUsers = await User.countDocuments({
-      createdAt: { $gte: thirtyDaysAgo }
-    });
-
-    res.json({
-      success: true,
-      stats: {
-        totalUsers,
-        activeUsers,
-        blockedUsers,
-        adminUsers,
-        regularUsers,
-        recentUsers,
-        activityRate: totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0
-      }
-    });
-  } catch (error) {
-    console.error('Errore nel recupero statistiche:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Errore nel recupero statistiche admin'
-    });
-  }
-};
-
 module.exports = {
   getAllUsers,
   toggleUserBlock,
   promoteToAdmin,
-  demoteToUser,
-  getAdminStats
+  demoteToUser
 };

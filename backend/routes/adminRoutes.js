@@ -6,9 +6,11 @@ const {
   getAllUsers,
   toggleUserBlock,
   promoteToAdmin,
-  demoteToUser,
+  demoteToUser
+} = require('../controllers/adminUserManagement');
+const {
   getAdminStats
-} = require('../controllers/adminController');
+} = require('../controllers/adminStatsController');
 
 // Tutte le routes richiedono autenticazione e ruolo admin
 router.use(authenticate);

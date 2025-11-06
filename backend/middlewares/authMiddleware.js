@@ -87,32 +87,7 @@ const optionalAuth = async (req, res, next) => {
   }
 };
 
-// Middleware per ruoli specifici
-const requireRole = (roles) => {
-  return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        message: 'Autenticazione richiesta' 
-      });
-    }
-
-    const userRole = req.user.role;
-    const allowedRoles = Array.isArray(roles) ? roles : [roles];
-
-    if (!allowedRoles.includes(userRole)) {
-      return res.status(403).json({ 
-        success: false, 
-        message: 'Permessi insufficienti' 
-      });
-    }
-
-    next();
-  };
-};
-
 module.exports = {
   authenticate,
   optionalAuth,
-  requireRole
 };
