@@ -1,3 +1,7 @@
+// Rotte di autenticazione
+// Questo modulo definisce le rotte per l'autenticazione degli utenti.
+// Include rotte per registrazione, login, logout, e verifica token.
+
 const express = require('express');
 const { register, login, logout } = require('../controllers/authController');
 const { authenticate } = require('../middlewares/authMiddleware');

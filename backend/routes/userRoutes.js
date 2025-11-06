@@ -1,3 +1,7 @@
+// Rotte utente
+// Questo modulo definisce le rotte per le operazioni relative all'utente, come profilo, eventi, password, chat, segnalazioni, e partecipazioni.
+// Include rotte per ottenere il profilo utente, aggiornare il profilo, ottenere eventi pubblici, aggiungere messaggi di chat, segnalare eventi, e partecipare agli eventi.
+
 const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middlewares/authMiddleware');

@@ -1,3 +1,13 @@
+// Questa funzione gestisce l'autenticazione tramite JWT.
+// Prende il token dall'header Authorization.
+// Controlla se il token è fornito e ha il formato corretto.
+// Se il token non è fornito o ha un formato errato, viene inviato un messaggio di errore.
+// Altrimenti, il token viene verificato e decodificato.
+// Se il token è valido, viene cercato l'utente corrispondente nell'elenco utenti.
+// Se l'utente non esiste o è disabilitato, viene inviato un messaggio di errore.
+// Altrimenti, l'utente viene aggiunto alla richiesta (req.user) e il controllo passa al prossimo middleware.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 

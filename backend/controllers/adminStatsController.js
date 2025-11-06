@@ -1,3 +1,7 @@
+// Recupera le statistiche amministrative, come il numero totale di utenti, utenti attivi, blocati, amministratori e normali.
+// Include anche il tasso di attivazione utenti (utenti attivi rispetto al totale).
+// Restituisce le statistiche in formato JSON.
+
 const User = require('../models/User');
 
 // Dashboard admin - statistiche

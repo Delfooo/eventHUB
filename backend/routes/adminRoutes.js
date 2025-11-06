@@ -1,3 +1,7 @@
+// Rotte amministrative
+// Questo modulo definisce le rotte per la gestione amministrativa degli utenti e delle statistiche.
+// Include rotte per ottenere tutti gli utenti, bloccare/sbloccare utenti, promuovere/demuovere amministratori, e ottenere statistiche amministrative.
+
 const express = require('express');
 const router = express.Router();
 const { authenticate } = require('../middlewares/authMiddleware');

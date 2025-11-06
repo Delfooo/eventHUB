@@ -1,3 +1,10 @@
+// Questa funzione gestisce il recupero del profilo di un utente.
+// Prende l'ID dell'utente dal token JWT.
+// Controlla se l'utente esiste.
+// Se l'utente non esiste, viene inviato un messaggio di errore.
+// Altrimenti, viene inviato il profilo utente senza la password.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
 const User = require('../models/User');
 
 // Ottieni profilo utente corrente

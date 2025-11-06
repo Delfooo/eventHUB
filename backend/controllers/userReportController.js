@@ -1,5 +1,10 @@
+// Controllore per la segnalazione di eventi
+// Questo modulo fornisce la funzione per la segnalazione di eventi.
+// Include la verifica della presenza dell'utente nella lista degli iscritti,
+// l'aggiunta dell'utente alla lista dei segnalatori e l'aggiornamento del conteggio delle segnalazioni.
+
 const Event = require('../models/Event');
-const io = require('../socket'); // Assicurati che il percorso sia corretto
+const realTimeService = require('../services/realTimeService');
 
 const reportEvent = async (req, res) => {
   try {
@@ -23,12 +28,7 @@ const reportEvent = async (req, res) => {
     if (event.reportCount >= 5 && !event.isReported) { // Esempio: 5 segnalazioni
       event.isReported = true;
       // Notifica gli amministratori o il sistema per la revisione
-      io.getIO().emit('admin:eventReported', {
-        eventId: event._id,
-        eventName: event.name,
-        reportCount: event.reportCount,
-        reportedBy: userId
-      });
+      realTimeService.emitEventReported(event._id, event.name, event.reportCount, userId);
     }
 
     await event.save();

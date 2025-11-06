@@ -1,3 +1,10 @@
+// Questa funzione gestisce l'invio di messaggi in chat per un evento.
+// Prende l'ID dell'evento dalla richiesta e il messaggio dal corpo della richiesta.
+// Controlla se l'evento esiste e se l'utente è autorizzato a inviare messaggi (partecipante o proprietario).
+// Se il messaggio è vuoto, viene inviato un messaggio di errore.
+// Altrimenti, il messaggio viene aggiunto alla lista dei messaggi della chat, l'evento viene salvato e viene inviato un messaggio di conferma.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
 const Event = require('../models/Event');
 
 exports.addChatMessage = async (req, res) => {

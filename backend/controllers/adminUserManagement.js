@@ -1,3 +1,8 @@
+// Questa funzione recupera tutti gli utenti presenti nel database, escludendo il campo password per sicurezza.
+// Restituisce una lista ordinata per data di registrazione (dal più recente al più vecchio)
+// con un massimo di 100 utenti.
+// Se si verificano errori durante il recupero, viene inviato un messaggio di errore con status 500.
+
 const User = require('../models/User');
 
 // Lista di tutti gli utenti (per admin)

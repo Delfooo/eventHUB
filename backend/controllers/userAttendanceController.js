@@ -1,5 +1,9 @@
+// Controllore per l'iscrizione e la disiscrizione da eventi
+// Questo modulo fornisce le funzioni per l'iscrizione e la disiscrizione degli utenti da eventi.
+// Include le funzioni per aggiungere e rimuovere gli utenti dalla lista degli iscritti di un evento.
+
 const Event = require('../models/Event');
-const { io } = require('../socket');
+const realTimeService = require('../services/realTimeService');
 
 const joinEvent = async (req, res) => {
   try {
@@ -24,7 +28,7 @@ const joinEvent = async (req, res) => {
     event.attendees.push(userId);
     await event.save();
 
-    io.emit('userJoinedEvent', { eventId: event._id, userId: userId, username: req.user.username, eventTitle: event.title });
+    realTimeService.emitUserJoinedEvent(event._id, userId, req.user.username, event.title);
 
     res.status(200).json({ success: true, message: 'Iscrizione all evento avvenuta con successo' });
   } catch (error) {
@@ -51,7 +55,7 @@ const leaveEvent = async (req, res) => {
     event.attendees = event.attendees.filter(attendee => attendee.toString() !== userId.toString());
     await event.save();
 
-    io.emit('userLeftEvent', { eventId: event._id, userId: userId, username: req.user.username, eventTitle: event.title });
+    realTimeService.emitUserLeftEvent(event._id, userId, req.user.username, event.title);
 
     res.status(200).json({ success: true, message: 'Disiscrizione dall evento avvenuta con successo' });
   } catch (error) {

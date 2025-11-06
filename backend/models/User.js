@@ -1,3 +1,7 @@
+// Modello Utente
+// Questo modello definisce la struttura dei dati per gli utenti.
+// Include campi come username, email, password, isActive, role, resetPasswordToken, resetPasswordExpires, lastLogin.
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 

@@ -1,3 +1,11 @@
+// Questa funzione gestisce il controllo di accesso basato sui ruoli.
+// Prende il ruolo richiesto come argomento.
+// Controlla se l'utente autenticato ha il ruolo richiesto.
+// Se l'utente non è autenticato, viene inviato un messaggio di errore.
+// Se l'utente ha il ruolo corretto, il controllo passa al prossimo middleware.
+// Se l'utente non ha il ruolo richiesto, viene inviato un messaggio di errore.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
 const requireRole = (role) => {
   return (req, res, next) => {
     try {

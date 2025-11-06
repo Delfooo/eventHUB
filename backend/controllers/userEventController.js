@@ -1,3 +1,10 @@
+// Questa funzione gestisce la creazione di nuovi eventi.
+// Prende i campi titolo, descrizione, data, luogo, capienza, immagine e categoria dal corpo della richiesta.
+// Controlla se tutti i campi obbligatori sono presenti.
+// Se l'utente non è autenticato, viene inviato un messaggio di errore.
+// Altrimenti, viene creato un nuovo evento, associato all'utente autenticato, e viene inviato un messaggio di conferma.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
 const Event = require('../models/Event');
 const { io } = require('../socket');
 

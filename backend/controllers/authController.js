@@ -1,3 +1,13 @@
+// Questa funzione gestisce la registrazione di nuovi utenti.
+// Prende i campi username, email e password dal corpo della richiesta.
+// Valida l'input, controllando se tutti i campi sono presenti e se la password è sufficientemente lunga.
+// Controlla se l'email o l'username sono già registrati in precedenza.
+// Se tutto è valido, crea un nuovo utente, salva il password hashato e genera un token JWT.
+// Restituisce l'utente registrato e il token in formato JSON con status 201.
+// Se si verificano errori, viene inviato un messaggio di errore con status 500.
+
+
+
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 

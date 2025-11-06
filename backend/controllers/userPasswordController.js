@@ -1,17 +1,12 @@
+// Controllore per il cambio di password
+// Questo modulo fornisce la funzione per il cambio di password degli utenti.
+// Include la verifica della password corrente, la validazione della nuova password e l'aggiornamento della password dell'utente.
+
 const User = require('../models/User');
-const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { jwtSecret } = require('../config/configJWT');
-
-// 1. Configura Nodemailer (usa variabili d'ambiente per credenziali!)
-const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Oppure 'SendGrid', 'Mailgun', ecc.
-    auth: {
-        user: process.env.EMAIL_USER,    // Tua email
-        pass: process.env.EMAIL_PASS     // Password per le app/Token
-    }
-});
+const emailService = require('../services/emailService');
 
 // Cambia password
 exports.changePassword = async (req, res) => {
@@ -88,7 +83,7 @@ exports.forgotPassword = async (req, res) => {
             html: `<p>Hai richiesto un reset della password.</p>\n                   <p>Clicca su questo link per procedere: <a href=\"${resetURL}\">Reset Password</a></p>\n                   <p>Questo link è valido solo per un\'ora.</p>`
         };
 
-        await transporter.sendMail(mailOptions);
+        await emailService.sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Email di reset inviata con successo.' });
 

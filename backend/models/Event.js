@@ -1,3 +1,7 @@
+// Modello Evento
+// Questo modello definisce la struttura dei dati per gli eventi.
+// Include campi come titolo, descrizione, data, luogo, capacità, categoria, immagine, proprietario, partecipanti, messaggi di chat, data di creazione, segnalato e conteggio segnalazioni.
+
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({

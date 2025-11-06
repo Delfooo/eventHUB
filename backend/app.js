@@ -1,3 +1,8 @@
+// Configurazione EventHub API
+// Questo modulo configura l'applicazione EventHub API.
+// Include la configurazione del database, del server, del CORS, del JWT, e della creazione dell'applicazione Express.
+// Inoltre, inizializza il server Socket.io e configura il middleware per il parsing dei JSON e delle URL-encoded.
+
 const dotenv = require('dotenv');
 dotenv.config();
 
