@@ -60,3 +60,18 @@ Gli amministratori avranno un pannello di gestione per moderare eventi, utenti e
 ## Licenza
 
 Questo progetto è distribuito con licenza MIT.
+
+
+--- da modificare 
+# Installa dipendenze (se non già fatto)
+cd frontend
+npm init -y
+npm install express ejs
+
+# Avvia il backend (porta 3000)
+cd ../backend
+node app.js
+
+# Avvia il frontend (porta 3001)
+cd ../frontend
+node server.js
