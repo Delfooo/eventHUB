@@ -70,18 +70,19 @@ app.get('/my-events', (req, res) => {
   });
 });
 
+// Rotta dettaglio evento (pubblica)
+app.get('/event/:id', (req, res) => {
+  res.render('public/event-detail', {
+    title: 'Dettaglio Evento - EventHub',
+    page: 'event-detail'
+  });
+});
+
 // ROTTE ADMIN (protette - verifica token lato client)
 app.get('/admin', (req, res) => {
   res.render('admin/dashboard', {
     title: 'Admin Dashboard - EventHub',
     page: 'admin-dashboard'
-  });
-});
-
-app.get('/admin/users', (req, res) => {
-  res.render('admin/users', {
-    title: 'Gestione Utenti - EventHub',
-    page: 'admin-users'
   });
 });
 
