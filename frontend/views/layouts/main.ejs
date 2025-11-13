@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'EventHub' %></title>
+    
+    <!-- CSS principale -->
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <!-- Font Awesome per icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS specifico della pagina (opzionale) -->
+    <% if (typeof additionalCSS !== 'undefined') { %>
+        <% additionalCSS.forEach(css => { %>
+            <link rel="stylesheet" href="<%= css %>">
+        <% }); %>
+    <% } %>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                EventHub
+            </a>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="nav-link <%= page === 'home' ? 'active' : '' %>">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                
+                <!-- Link mostrati solo se l'utente è loggato -->
+                <div id="authLinks" style="display: none;">
+                    <a href="/dashboard" class="nav-link <%= page === 'dashboard' ? 'active' : '' %>">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </a>
+                    <a href="/my-events" class="nav-link <%= page === 'my-events' ? 'active' : '' %>">
+                        <i class="fas fa-calendar-check"></i> I Miei Eventi
+                    </a>
+                    <a href="/profile" class="nav-link <%= page === 'profile' ? 'active' : '' %>">
+                        <i class="fas fa-user"></i> Profilo
+                    </a>
+                    
+                    <!-- Link admin (mostrato solo per admin) -->
+                    <a href="/admin" class="nav-link admin-only" id="adminLink" style="display: none;">
+                        <i class="fas fa-shield-alt"></i> Admin
+                    </a>
+                    
+                    <button class="btn btn-danger btn-sm" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                
+                <!-- Link mostrati solo se l'utente NON è loggato -->
+                <div id="guestLinks">
+                    <a href="/login" class="nav-link <%= page === 'login' ? 'active' : '' %>">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="/register" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Registrati
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hamburger menu per mobile -->
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Contenuto principale -->
+    <main class="main-content">
+        <!-- Alert container per messaggi -->
+        <div id="alertContainer"></div>
+        
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 EventHub. Tutti i diritti riservati.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Termini di Servizio</a>
+                <a href="#">Contatti</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript principale -->
+    <script src="/js/auth.js"></script>
+    <script src="/js/utils.js"></script>
+    
+    <!-- Script specifici della pagina (opzionale) -->
+    <% if (typeof additionalJS !== 'undefined') { %>
+        <% additionalJS.forEach(js => { %>
+            <script src="<%= js %>"></script>
+        <% }); %>
+    <% } %>
+    
+    <script>
+        // Controlla lo stato di autenticazione all'avvio
+        checkAuthStatus();
+    </script>
+</body>
+</html>

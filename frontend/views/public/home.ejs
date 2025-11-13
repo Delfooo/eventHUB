@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                EventHub
+            </a>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="/" class="nav-link active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                
+                <!-- Link mostrati solo se l'utente è loggato -->
+                <div id="authLinks" style="display: none;">
+                    <a href="/dashboard" class="nav-link">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </a>
+                    <a href="/my-events" class="nav-link">
+                        <i class="fas fa-calendar-check"></i> I Miei Eventi
+                    </a>
+                    <a href="/profile" class="nav-link">
+                        <i class="fas fa-user"></i> Profilo
+                    </a>
+                    
+                    <!-- Link admin (mostrato solo per admin) -->
+                    <a href="/admin" class="nav-link admin-only" id="adminLink" style="display: none;">
+                        <i class="fas fa-shield-alt"></i> Admin
+                    </a>
+                    
+                    <button class="btn btn-danger btn-sm" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+                
+                <!-- Link mostrati solo se l'utente NON è loggato -->
+                <div id="guestLinks">
+                    <a href="/login" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="/register" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Registrati
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Hamburger menu per mobile -->
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Scopri gli Eventi nella Tua Città</h1>
+            <p class="hero-subtitle">Trova concerti, workshop, conferenze e molto altro</p>
+            
+            <!-- Barra di ricerca principale -->
+            <div class="hero-search">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input 
+                        type="text" 
+                        id="heroSearchInput" 
+                        placeholder="Cerca eventi per titolo..."
+                        class="search-input"
+                    >
+                </div>
+                <button class="btn btn-primary btn-large" onclick="searchEvents()">
+                    <i class="fas fa-search"></i> Cerca
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            
+            <!-- Filters Section -->
+            <div class="filters-section">
+                <h2 class="section-title">
+                    <i class="fas fa-filter"></i> Filtra Eventi
+                </h2>
+                
+                <div class="filters-container">
+                    <!-- Filtro Data -->
+                    <div class="filter-group">
+                        <label for="filterDate">
+                            <i class="fas fa-calendar"></i> Data
+                        </label>
+                        <input 
+                            type="date" 
+                            id="filterDate" 
+                            class="filter-input"
+                            min="<%= new Date().toISOString().split('T')[0] %>"
+                        >
+                    </div>
+                    
+                    <!-- Filtro Categoria -->
+                    <div class="filter-group">
+                        <label for="filterCategory">
+                            <i class="fas fa-tags"></i> Categoria
+                        </label>
+                        <select id="filterCategory" class="filter-input">
+                            <option value="">Tutte le categorie</option>
+                            <option value="Musica">🎵 Musica</option>
+                            <option value="Sport">⚽ Sport</option>
+                            <option value="Arte">🎨 Arte</option>
+                            <option value="Tecnologia">💻 Tecnologia</option>
+                            <option value="Cibo">🍕 Cibo & Drink</option>
+                            <option value="Business">💼 Business</option>
+                            <option value="Formazione">📚 Formazione</option>
+                            <option value="Intrattenimento">🎭 Intrattenimento</option>
+                            <option value="Altro">🎪 Altro</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro Luogo -->
+                    <div class="filter-group">
+                        <label for="filterLocation">
+                            <i class="fas fa-map-marker-alt"></i> Luogo
+                        </label>
+                        <input 
+                            type="text" 
+                            id="filterLocation" 
+                            class="filter-input"
+                            placeholder="Es. Milano, Roma..."
+                        >
+                    </div>
+                    
+                    <!-- Bottoni Azione -->
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyFilters()">
+                            <i class="fas fa-check"></i> Applica Filtri
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="events-section">
+                <div class="events-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-calendar-alt"></i> 
+                        Eventi Disponibili
+                        <span class="events-count" id="eventsCount">(0)</span>
+                    </h2>
+                    
+                    <!-- Sort Options -->
+                    <div class="sort-options">
+                        <label for="sortBy">Ordina per:</label>
+                        <select id="sortBy" class="sort-select" onchange="applyFilters()">
+                            <option value="date-asc">Data (prima i più vicini)</option>
+                            <option value="date-desc">Data (prima i più lontani)</option>
+                            <option value="title-asc">Titolo (A-Z)</option>
+                            <option value="title-desc">Titolo (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Caricamento eventi in corso...</p>
+                </div>
+
+                <!-- No Events Message -->
+                <div id="noEventsMessage" class="no-events-message" style="display: none;">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>Nessun evento trovato</h3>
+                    <p>Prova a modificare i filtri o la ricerca</p>
+                </div>
+
+                <!-- Events Grid Container -->
+                <div class="events-grid" id="eventsGrid">
+                    <!-- Le card degli eventi verranno inserite dinamicamente qui -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <button class="btn btn-secondary" id="prevPage" onclick="changePage(-1)">
+                        <i class="fas fa-chevron-left"></i> Precedente
+                    </button>
+                    <span class="page-info" id="pageInfo">Pagina 1 di 1</span>
+                    <button class="btn btn-secondary" id="nextPage" onclick="changePage(1)">
+                        Successiva <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>EventHub</h3>
+                    <p>La piattaforma per scoprire e creare eventi nella tua città</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Link Utili</h4>
+                    <ul>
+                        <li><a href="/about">Chi Siamo</a></li>
+                        <li><a href="/contact">Contatti</a></li>
+                        <li><a href="/faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legale</h4>
+                    <ul>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Termini di Servizio</a></li>
+                        <li><a href="/cookies">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Seguici</h4>
+                    <div class="social-links">
+                        <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 EventHub. Tutti i diritti riservati.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Alert container -->
+    <div id="alertContainer"></div>
+
+    <!-- JavaScript -->
+    <script src="/js/utils.js"></script>
+    <script src="/js/home.js"></script>
+    <script>
+        // Controlla lo stato di autenticazione all'avvio
+        checkAuthStatus();
+    </script>
+</body>
+</html>
