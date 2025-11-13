@@ -2,6 +2,7 @@
 // Questo modulo configura l'applicazione EventHub API.
 // Include la configurazione del database, del server, del CORS, del JWT, e della creazione dell'applicazione Express.
 // Inoltre, inizializza il server Socket.io e configura il middleware per il parsing dei JSON e delle URL-encoded.
+// Configurazione EventHub API con Socket.io
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -14,6 +15,10 @@ const configJWT = require('./config/configJWT');
 const app = express();
 const initSocket = require('./socket');
 const { httpServer, io } = initSocket(app);
+
+// Passa io al controller chat
+const chatController = require('./controllers/userChatController');
+chatController.setSocketIO(io);
 
 // Middleware
 app.use(cors({
@@ -64,10 +69,12 @@ app.get('/', (req, res) => {
       user: {
         profile: 'GET /api/user/profile',
         updateProfile: 'PUT /api/user/profile',
-        changePassword: 'PATCH /api/user/password',
+        changePassword: 'PUT /api/user/change-password',
         createEvent: 'POST /api/user/events',
         joinEvent: 'POST /api/user/events/:eventId/join',
-        myEvents: 'GET /api/user/events'
+        myEvents: 'GET /api/user/events',
+        chat: 'POST /api/user/events/:eventId/chat',
+        getChat: 'GET /api/user/events/:eventId/chat'
       },
       admin: {
         users: 'GET /api/admin/users',
@@ -110,8 +117,9 @@ mongoose.connect(configDB.mongoUri, {
   const PORT = configDB.port;
   httpServer.listen(PORT, () => {
     console.log(`🚀 Server avviato su porta ${PORT}`);
-    console.log(`📍 Ambiente: ${configDB.nodeEnv}`);
+    console.log(`🔒 Ambiente: ${configDB.nodeEnv}`);
     console.log(`🌐 CORS abilitato per: ${configDB.corsOrigin}`);
+    console.log(`💬 Socket.io attivo per chat real-time`);
   });
 })
 .catch((error) => {

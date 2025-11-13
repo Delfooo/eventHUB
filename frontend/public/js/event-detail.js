@@ -1,9 +1,11 @@
-// JavaScript per Pagina Dettaglio Evento
+// JavaScript per Pagina Dettaglio Evento con Socket.io Real-Time
 
 const API_URL = 'http://localhost:3000/api';
+const SOCKET_URL = 'http://localhost:3000';
 
 let currentEvent = null;
 let currentUser = null;
+let socket = null;
 
 // ===== CARICA DETTAGLIO EVENTO =====
 async function loadEventDetail(eventId) {
@@ -39,9 +41,10 @@ async function loadEventDetail(eventId) {
             
             // Mostra chat solo se partecipante o organizzatore
             if (currentUser && isParticipant(currentEvent)) {
-                loadChatMessages(eventId);
+                await loadChatMessages(eventId);
                 document.getElementById('chatSection').style.display = 'block';
                 setupChatForm(eventId);
+                initializeSocketIO(eventId);
             }
             
             // Mostra card segnalazione se loggato

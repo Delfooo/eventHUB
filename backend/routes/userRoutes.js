@@ -1,6 +1,7 @@
 // Rotte utente
 // Questo modulo definisce le rotte per le operazioni relative all'utente, come profilo, eventi, password, chat, segnalazioni, e partecipazioni.
 // Include rotte per ottenere il profilo utente, aggiornare il profilo, ottenere eventi pubblici, aggiungere messaggi di chat, segnalare eventi, e partecipare agli eventi.
+// Rotte utente con Chat
 
 const express = require('express');
 const router = express.Router();
@@ -32,11 +33,30 @@ router.post('/reset-password/:token', userPasswordController.resetPassword);
  * @desc    Ottieni lista eventi pubblici con filtri
  * @access  Public
  */
-router.post('/events/:eventId/chat', authenticate, requireAnyRole('user', 'admin'), userChatController.addChatMessage);
-router.post('/events/:eventId/report', authenticate, requireAnyRole('user', 'admin'), userReportController.reportEvent);
 router.get('/public-events', userEventController.getPublicEvents);
 
-// Tutte le routes richiedono autenticazione (sia user che admin possono accedere)
+/**
+ * @route   POST /api/user/events/:eventId/chat
+ * @desc    Aggiungi messaggio alla chat evento
+ * @access  Private (User/Admin)
+ */
+router.post('/events/:eventId/chat', authenticate, requireAnyRole('user', 'admin'), userChatController.addChatMessage);
+
+/**
+ * @route   GET /api/user/events/:eventId/chat
+ * @desc    Ottieni messaggi chat evento
+ * @access  Private (User/Admin)
+ */
+router.get('/events/:eventId/chat', authenticate, requireAnyRole('user', 'admin'), userChatController.getChatMessages);
+
+/**
+ * @route   POST /api/user/events/:eventId/report
+ * @desc    Segnala evento
+ * @access  Private (User/Admin)
+ */
+router.post('/events/:eventId/report', authenticate, requireAnyRole('user', 'admin'), userReportController.reportEvent);
+
+// Tutte le routes richiedono autenticazione
 router.use(authenticate);
 
 /**
@@ -44,49 +64,50 @@ router.use(authenticate);
  * @desc    Ottieni profilo utente corrente
  * @access  Private
  */
-router.get('/profile', authenticate, userProfileController.getProfile);
+router.get('/profile', userProfileController.getProfile);
 
 /**
  * @route   PUT /api/user/profile
  * @desc    Aggiorna profilo utente
  * @access  Private
  */
-router.put('/profile', authenticate, userProfileController.updateProfile);
+router.put('/profile', userProfileController.updateProfile);
 
 /**
- * @route   PATCH /api/user/password
+ * @route   PUT /api/user/change-password
  * @desc    Cambia password
  * @access  Private
  */
-router.put('/change-password', authenticate, userPasswordController.changePassword);
+router.put('/change-password', userPasswordController.changePassword);
 
 /**
  * @route   POST /api/user/events
  * @desc    Crea nuovo evento
- * @access  Private (User/Admin)
+ * @access  Private (Admin)
  */
-router.post('/events', authenticate, requireAnyRole('admin'), userEventController.createEvent);
+router.post('/events', requireAnyRole('admin'), userEventController.createEvent);
 
 /**
  * @route   PUT /api/user/events/:eventId
  * @desc    Aggiorna un evento esistente
  * @access  Private (Solo il proprietario dell'evento)
  */
-router.put('/events/:eventId', authenticate, requireAnyRole('admin'), userEventController.updateEvent);
+router.put('/events/:eventId', requireAnyRole('admin'), userEventController.updateEvent);
 
 /**
  * @route   DELETE /api/user/events/:eventId
  * @desc    Elimina un evento esistente
  * @access  Private (Solo il proprietario dell'evento)
  */
-router.delete('/events/:eventId', authenticate, requireAnyRole('admin'), userEventController.deleteEvent);
+router.delete('/events/:eventId', requireAnyRole('admin'), userEventController.deleteEvent);
 
 /**
  * @route   POST /api/user/events/:eventId/join
  * @desc    Iscriviti a evento
  * @access  Private (User/Admin)
  */
-router.post('/events/:eventId/join', authenticate, requireAnyRole('user', 'admin'), userAttendanceController.joinEvent);
+router.post('/events/:eventId/join', requireAnyRole('user', 'admin'), userAttendanceController.joinEvent);
+
 /**
  * @route   POST /api/user/events/:eventId/leave
  * @desc    Annulla iscrizione a evento
