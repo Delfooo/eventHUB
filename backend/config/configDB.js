@@ -1,7 +1,7 @@
 /* Configurazione Database */ 
 const configDB = {
   // Database
-  mongoUri: process.env.MONGODB_URI,
+  mongoUri: process.env.MONGODB_URI || 'mongodb+srv://michelangelodelfino_db_user:Jb2xqY6rtKySzhLL@eventhub.05x1kum.mongodb.net/eventhub?appName=eventHub',
 
   // Server
   port: process.env.PORT || 5000,
