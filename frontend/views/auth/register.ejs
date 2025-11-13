@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="auth-page">
-    <!-- Navbar semplificata -->
     <nav class="navbar">
         <div class="container">
             <a href="/" class="logo">
@@ -24,17 +23,14 @@
 
     <main class="auth-container">
         <div class="auth-card">
-            <!-- Header -->
             <div class="auth-header">
                 <i class="fas fa-user-plus auth-icon"></i>
                 <h1>Unisciti a EventHub</h1>
                 <p>Crea il tuo account e inizia a scoprire eventi</p>
             </div>
 
-            <!-- Alert per messaggi di errore/successo -->
             <div id="alertContainer"></div>
 
-            <!-- Form di Registrazione -->
             <form id="registerForm" class="auth-form">
                 <div class="form-group">
                     <label for="username">
@@ -90,7 +86,6 @@
                         </button>
                     </div>
                     <small class="form-hint">Minimo 6 caratteri</small>
-                    <!-- Password strength indicator -->
                     <div class="password-strength" id="passwordStrength">
                         <div class="strength-bar"></div>
                     </div>
@@ -130,12 +125,10 @@
                 </button>
             </form>
 
-            <!-- Divider -->
             <div class="auth-divider">
                 <span>oppure</span>
             </div>
 
-            <!-- Link login -->
             <div class="auth-footer">
                 <p>Hai già un account?</p>
                 <a href="/login" class="btn btn-outline btn-block">
@@ -145,7 +138,6 @@
             </div>
         </div>
 
-        <!-- Info box laterale (opzionale) -->
         <div class="auth-info">
             <h2>Perché EventHub?</h2>
             <ul>
@@ -173,11 +165,43 @@
         </div>
     </main>
 
-    <!-- JavaScript -->
     <script src="/js/utils.js"></script>
     <script>
         // Configurazione API
         const API_URL = 'http://localhost:3000/api';
+
+        // Funzione per mostrare/nascondere password (qui per completezza, ma in utils.js)
+        window.togglePassword = function(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentElement.querySelector('.toggle-password i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Funzione per mostrare alert (qui per completezza, ma in utils.js)
+        window.showAlert = function(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
 
         // Password strength checker
         document.getElementById('password').addEventListener('input', (e) => {
@@ -195,9 +219,14 @@
             const colors = ['#e74c3c', '#e67e22', '#f39c12', '#2ecc71', '#27ae60'];
             const labels = ['Molto debole', 'Debole', 'Media', 'Forte', 'Molto forte'];
             
-            strengthBar.style.width = (strength * 20) + '%';
-            strengthBar.style.backgroundColor = colors[strength - 1] || '#e74c3c';
-            strengthContainer.setAttribute('data-label', labels[strength - 1] || '');
+            if (password.length > 0) {
+                strengthBar.style.width = (strength * 20) + '%';
+                strengthBar.style.backgroundColor = colors[strength - 1] || '#e74c3c';
+                strengthContainer.setAttribute('data-label', labels[strength - 1] || '');
+            } else {
+                strengthBar.style.width = '0%';
+                strengthContainer.setAttribute('data-label', '');
+            }
         });
 
         // Gestione submit form registrazione
@@ -260,40 +289,6 @@
                 registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Registrati';
             }
         });
-        
-        // Funzione per mostrare/nascondere password
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const icon = input.nextElementSibling.querySelector('i');
-            
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        }
-        
-        // Funzione per mostrare alert
-        function showAlert(message, type) {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
-            
-            alertContainer.innerHTML = `
-                <div class="alert ${alertClass}">
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            // Rimuovi alert dopo 5 secondi
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
-            }, 5000);
-        }
     </script>
 </body>
 </html>

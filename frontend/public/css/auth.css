@@ -1,6 +1,7 @@
-/* ===== AUTH PAGE STYLES ===== */
+/* ===== AUTH PAGE STYLES (auth.css) ===== */
 
 .auth-page {
+    /* Mantengo i valori esatti che hai usato */
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
 }
@@ -9,19 +10,51 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
+    /* Struttura a griglia che mette Card e Info Box uno di fianco all'altro */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
     align-items: center;
 }
 
-/* Auth Card */
+/* Auth Card (Contenitore per i due pannelli) */
 .auth-card {
     background: white;
     border-radius: 12px;
-    padding: 40px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    
+    /* MODIFICHE CHIAVE PER SCORRIMENTO */
+    padding: 0; /* Rimosso il padding dal contenitore */
+    overflow: hidden; /* Nasconde il form che è fuori vista */
+    display: flex; /* Permette ai pannelli di stare affiancati */
+    width: 100%;
+    /* Applica la transizione al movimento orizzontale della card */
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
 }
+
+/* Auth Panels (Login e Registrazione) */
+.auth-panel {
+    /* Ogni pannello deve occupare il 100% della larghezza della card */
+    min-width: 100%; 
+    /* Riportiamo il padding sui pannelli */
+    padding: 40px; 
+    box-sizing: border-box;
+    /* La transizione sull'opacità non è necessaria, ma la lascio */
+    transition: opacity 0.3s ease;
+}
+
+/* LOGICA DI SCORRIMENTO TRAMITE CLASSE 'active' sull'ID #formWrapper (auth-container) */
+
+/* Se il contenitore esterno ha la classe 'active' (Registrazione), trasla la card a sinistra */
+#formWrapper.active .auth-card {
+    transform: translateX(-100%); 
+}
+
+/* Se il contenitore esterno ha la classe 'login-active' (Login), assicura che sia a 0 */
+#formWrapper.login-active .auth-card {
+    transform: translateX(0%);
+}
+
 
 .auth-header {
     text-align: center;
@@ -358,6 +391,7 @@
 @media (max-width: 968px) {
     .auth-container {
         grid-template-columns: 1fr;
+        gap: 20px; /* Ridotto il gap per dispositivi mobili */
     }
     
     .auth-info {
@@ -368,7 +402,8 @@
     
     .auth-info li {
         padding-left: 0;
-        padding-top: 30px;
+        padding-top: 15px; /* Modificato da 30px per compattare */
+        padding-bottom: 15px; 
     }
     
     .auth-info li i {
@@ -376,12 +411,15 @@
         display: block;
         margin-bottom: 10px;
     }
+
+    /* Su schermi piccoli, la card deve tornare al padding standard se necessario */
+    .auth-card, .auth-panel {
+        padding: 25px;
+    }
 }
 
 @media (max-width: 576px) {
-    .auth-card {
-        padding: 25px;
-    }
+    /* La regola per .auth-card è già definita sopra in 968px (padding: 25px) e copre questo caso */
     
     .form-footer {
         flex-direction: column;

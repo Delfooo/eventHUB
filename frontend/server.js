@@ -25,26 +25,19 @@ app.get('/', (req, res) => {
   });
 });
 
-// Pagina Access (Login & Register unificati)
-app.get('/login', (req, res) => {
-  res.render('auth/access', {
-    title: 'Accedi - EventHub',
-    page: 'access'
-  });
-});
-
+// La rotta di Registrazione
 app.get('/register', (req, res) => {
-  res.render('auth/access', {
+  res.render('auth/register', { 
     title: 'Registrati - EventHub',
-    page: 'access'
+    page: 'register'
   });
 });
 
-// Rotta access diretta
-app.get('/access', (req, res) => {
-  res.render('auth/access', {
-    title: 'Accedi o Registrati - EventHub',
-    page: 'access'
+// La rotta di Login 
+app.get('/login', (req, res) => {
+  res.render('auth/login', {
+    title: 'Accedi - EventHub',
+    page: 'login'
   });
 });
 
