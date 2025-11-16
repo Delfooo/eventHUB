@@ -1,116 +1,60 @@
-// Configurazione Socket.io
+// Socket.io Configuration con User Rooms per Notifiche
 // Questo modulo configura il server Socket.io per l'applicazione.
 // Include la creazione del server HTTP, l'inizializzazione di Socket.io, e la configurazione del CORS.
 
-const express = require('express');
-const path = require('path');
 const http = require('http');
 const socketIo = require('socket.io');
-const app = express();
-const server = http.createServer(app);
 
-// Configurazione Socket.io con CORS
-const io = socketIo(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
-});
-
-// Configurazione EJS come template engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Middleware per servire file statici (CSS, JS, immagini)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Middleware per parsing JSON e form
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// ROTTE PUBBLICHE
-// Homepage - Mostra il catalogo eventi pubblici
-app.get('/', (req, res) => {
-  res.render('public/home', {
-    title: 'EventHub - Scopri Eventi',
-    page: 'home'
+const initSocket = (app) => {
+  const httpServer = http.createServer(app);
+  
+  const io = socketIo(httpServer, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
   });
-});
 
-// Pagina Access (Login & Register unificati)
-app.get('/login', (req, res) => {
-  res.render('auth/access', {
-    title: 'Accedi - EventHub',
-    page: 'access'
+  // Map per tenere traccia degli utenti connessi
+  const userSockets = new Map();
+
+  io.on('connection', (socket) => {
+    console.log('✅ Socket connesso:', socket.id);
+
+    // Autentica utente e join user room
+    socket.on('authenticate', (userId) => {
+      if (userId) {
+        socket.userId = userId;
+        socket.join(`user-${userId}`);
+        userSockets.set(userId, socket.id);
+        console.log(`👤 Utente ${userId} autenticato e in room user-${userId}`);
+      }
+    });
+
+    // Join event room per chat
+    socket.on('joinEventRoom', (eventId) => {
+      socket.join(`event-${eventId}`);
+      console.log(`📅 Socket ${socket.id} entrato in event-${eventId}`);
+    });
+
+    // Leave event room
+    socket.on('leaveEventRoom', (eventId) => {
+      socket.leave(`event-${eventId}`);
+      console.log(`👋 Socket ${socket.id} uscito da event-${eventId}`);
+    });
+
+    // Disconnessione
+    socket.on('disconnect', () => {
+      if (socket.userId) {
+        userSockets.delete(socket.userId);
+        console.log(`❌ Utente ${socket.userId} disconnesso`);
+      } else {
+        console.log('❌ Socket disconnesso:', socket.id);
+      }
+    });
   });
-});
 
-app.get('/register', (req, res) => {
-  res.render('auth/access', {
-    title: 'Registrati - EventHub',
-    page: 'access'
-  });
-});
+  return { httpServer, io };
+};
 
-// Rotta access diretta
-app.get('/access', (req, res) => {
-  res.render('auth/access', {
-    title: 'Accedi o Registrati - EventHub',
-    page: 'access'
-  });
-});
-
-// ROTTE UTENTE (protette - verifica token lato client)
-app.get('/dashboard', (req, res) => {
-  res.render('user/dashboard', {
-    title: 'Dashboard - EventHub',
-    page: 'dashboard'
-  });
-});
-
-app.get('/profile', (req, res) => {
-  res.render('user/profile', {
-    title: 'Profilo - EventHub',
-    page: 'profile'
-  });
-});
-
-app.get('/my-events', (req, res) => {
-  res.render('user/my-events', {
-    title: 'I Miei Eventi - EventHub',
-    page: 'my-events'
-  });
-});
-
-// Rotta dettaglio evento (pubblica)
-app.get('/event/:id', (req, res) => {
-  res.render('public/event-detail', {
-    title: 'Dettaglio Evento - EventHub',
-    page: 'event-detail'
-  });
-});
-
-// ROTTE ADMIN (protette - verifica token lato client)
-app.get('/admin', (req, res) => {
-  res.render('admin/dashboard', {
-    title: 'Admin Dashboard - EventHub',
-    page: 'admin-dashboard'
-  });
-});
-
-// 404 Handler
-app.use((req, res) => {
-  res.status(404).render('errors/404', {
-    title: '404 - Pagina non trovata',
-    page: '404'
-  });
-});
-
-// Avvio server
-const PORT = process.env.FRONTEND_PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🎨 Frontend server avviato su http://localhost:${PORT}`);
-  console.log(`📡 Backend API: ${process.env.BACKEND_URL || 'http://localhost:3000'}`);
-});
-
-module.exports = app;
+module.exports = initSocket;

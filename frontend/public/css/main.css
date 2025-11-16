@@ -6,16 +6,20 @@
 }
 
 :root {
-    --primary-color: #667eea;
-    --secondary-color: #764ba2;
-    --success-color: #48bb78;
-    --danger-color: #f56565;
-    --warning-color: #ed8936;
-    --info-color: #4299e1;
-    --dark-color: #2d3748;
-    --light-color: #f7fafc;
-    --gray-color: #718096;
-    --border-color: #e2e8f0;
+    /* Nuovi colori focalizzati sul blu */
+    --primary-color: #2563eb; /* Blu brillante, dominante */
+    --secondary-color: #1e3a8a; /* Blu navy, scuro per contrasto */
+    
+    /* Colori di stato adattati al tema blu */
+    --success-color: #059669; /* Verde-blu scuro per coerenza, tendente al ciano/smeraldo */
+    --danger-color: #b91c1c; /* Rosso scuro, mantenuto per segnalare pericoli */
+    --warning-color: #d97706; /* Arancione scuro, mantenuto per segnalare avvisi */
+    --info-color: #3b82f6; /* Blu chiaro/medio per informazioni */
+    
+    --dark-color: #1f2937; /* Grigio molto scuro */
+    --light-color: #f3f4f6; /* Grigio molto chiaro */
+    --gray-color: #6b7280; /* Grigio medio */
+    --border-color: #e5e7eb; /* Grigio chiaro per bordi */
 }
 
 body {
@@ -80,13 +84,13 @@ body {
 }
 
 .nav-link:hover {
-    background: var(--light-color);
+    background: var(--border-color); /* Un blu molto chiaro/grigio chiaro */
     color: var(--primary-color);
 }
 
 .nav-link.active {
     color: var(--primary-color);
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(37, 99, 235, 0.1); /* Sfondo chiaro del primary-color */
 }
 
 .hamburger {
@@ -121,9 +125,9 @@ body {
 }
 
 .btn-primary:hover {
-    background: #5568d3;
+    background: #1d4ed8; /* Sfumatura più scura di blu */
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
 }
 
 .btn-secondary {
@@ -132,17 +136,24 @@ body {
 }
 
 .btn-secondary:hover {
-    background: #4a5568;
+    background: #4b5563;
 }
 
+/* Stati di allerta con un tocco di blu/ciano per il successo */
 .btn-success {
-    background: var(--success-color);
+    background: var(--success-color); 
     color: white;
+}
+.btn-success:hover {
+    background: #047857;
 }
 
 .btn-danger {
-    background: var(--danger-color);
+    background: var(--danger-color); 
     color: white;
+}
+.btn-danger:hover {
+    background: #991b1b;
 }
 
 .btn-outline {
@@ -239,27 +250,27 @@ body {
 }
 
 .alert-success {
-    background: #d4edda;
-    border-left: 4px solid var(--success-color);
-    color: #155724;
+    background: #d1fae5; /* Sfondo verde acqua molto chiaro */
+    border-left: 4px solid var(--success-color); /* Bordo verde-blu */
+    color: #065f46; /* Testo verde scuro */
 }
 
 .alert-error {
-    background: #f8d7da;
-    border-left: 4px solid var(--danger-color);
-    color: #721c24;
+    background: #fee2e2; /* Sfondo rosso molto chiaro */
+    border-left: 4px solid var(--danger-color); /* Bordo rosso */
+    color: #991b1b; /* Testo rosso scuro */
 }
 
 .alert-warning {
-    background: #fff3cd;
-    border-left: 4px solid var(--warning-color);
-    color: #856404;
+    background: #fef3c7; /* Sfondo giallo chiaro */
+    border-left: 4px solid var(--warning-color); /* Bordo arancione */
+    color: #92400e; /* Testo marrone scuro */
 }
 
 .alert-info {
-    background: #d1ecf1;
-    border-left: 4px solid var(--info-color);
-    color: #0c5460;
+    background: #dbeafe; /* Sfondo blu molto chiaro */
+    border-left: 4px solid var(--info-color); /* Bordo blu */
+    color: #1e40af; /* Testo blu scuro */
 }
 
 /* ===== CARDS ===== */
@@ -313,7 +324,7 @@ body {
 .form-control:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 textarea.form-control {

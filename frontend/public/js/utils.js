@@ -4,7 +4,10 @@
 // Configurazione globale
 const API_URL = 'http://localhost:3000/api';
 
+// =======================================================
 // ===== GESTIONE ALERT =====
+// =======================================================
+
 function showAlert(message, type = 'info', duration = 5000) {
     const alertContainer = document.getElementById('alertContainer');
     if (!alertContainer) return;
@@ -43,7 +46,10 @@ function closeAlert(alertId) {
     }
 }
 
-// ===== GESTIONE TOKEN =====
+// =======================================================
+// ===== GESTIONE TOKEN & UTENTE =====
+// =======================================================
+
 function getToken() {
     return localStorage.getItem('token');
 }
@@ -71,14 +77,18 @@ function isAdmin() {
     return user && user.role === 'admin';
 }
 
-// ===== FETCH CON AUTENTICAZIONE =====
+// =======================================================
+// ===== FETCH CON AUTENTICAZIONE (Authenticated Fetch) =====
+// =======================================================
+
 async function authenticatedFetch(url, options = {}) {
     const token = getToken();
     
     const defaultOptions = {
         headers: {
             'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` })
+            // Aggiunge l'header Authorization solo se il token esiste
+            ...(token && { 'Authorization': `Bearer ${token}` }) 
         }
     };
     
@@ -94,11 +104,14 @@ async function authenticatedFetch(url, options = {}) {
     try {
         const response = await fetch(url, mergedOptions);
         
-        // Se il token è scaduto o non valido
+        // Gestione automatica del reindirizzamento in caso di token scaduto
         if (response.status === 401) {
             removeToken();
-            window.location.href = '/login';
-            return null;
+            // Evita il reindirizzamento se siamo già sulla pagina di login
+            if (window.location.pathname !== '/login') {
+                window.location.href = '/login';
+            }
+            return { response, data: { success: false, message: 'Sessione scaduta' } };
         }
         
         const data = await response.json();
@@ -110,58 +123,68 @@ async function authenticatedFetch(url, options = {}) {
     }
 }
 
-// ===== VERIFICA STATO AUTENTICAZIONE =====
+// =======================================================
+// ===== VERIFICA STATO E LOGOUT (Funzioni di Navigazione) =====
+// =======================================================
+
 async function checkAuthStatus() {
     const token = getToken();
     const authLinks = document.getElementById('authLinks');
     const guestLinks = document.getElementById('guestLinks');
     const adminLink = document.getElementById('adminLink');
+    const logoutBtn = document.getElementById('logoutBtn');
     
     if (!token) {
         // Utente non autenticato
         if (authLinks) authLinks.style.display = 'none';
         if (guestLinks) guestLinks.style.display = 'flex';
+        if (adminLink) adminLink.style.display = 'none';
         return false;
     }
     
-    // Verifica validità del token
-    try {
-        const result = await authenticatedFetch(`${API_URL}/auth/verify`);
+    // Altrimenti, verifica la validità del token con il backend
+    const result = await authenticatedFetch(`${API_URL}/auth/verify`, { method: 'GET' });
+
+    if (result && result.data.success) {
+        // Token valido
+        if (authLinks) authLinks.style.display = 'flex';
+        if (guestLinks) guestLinks.style.display = 'none';
         
-        if (result && result.data.success) {
-            // Token valido
-            if (authLinks) authLinks.style.display = 'flex';
-            if (guestLinks) guestLinks.style.display = 'none';
-            
-            // Mostra link admin se l'utente è admin
-            if (adminLink && isAdmin()) {
-                adminLink.style.display = 'block';
-            }
-            
-            return true;
-        } else {
-            // Token non valido
-            removeToken();
-            if (authLinks) authLinks.style.display = 'none';
-            if (guestLinks) guestLinks.style.display = 'flex';
-            return false;
+        // Mostra link admin
+        if (adminLink) {
+            adminLink.style.display = isAdmin() ? 'block' : 'none';
         }
-    } catch (error) {
-        console.error('Auth check error:', error);
+
+        // Aggiungi listener per il Logout (solo se il token è valido)
+        if (logoutBtn && !logoutBtn.hasListener) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                logout();
+            });
+            logoutBtn.hasListener = true; // Flag per prevenire duplicati
+        }
+
+        return true;
+    } else {
+        // Token non valido / errore di verifica
+        removeToken();
+        if (authLinks) authLinks.style.display = 'none';
+        if (guestLinks) guestLinks.style.display = 'flex';
+        if (adminLink) adminLink.style.display = 'none';
         return false;
     }
 }
 
-// ===== LOGOUT =====
 async function logout() {
     if (!confirm('Sei sicuro di voler uscire?')) return;
     
     try {
+        // Esegue il fetch di logout (anche se fallisce, il cleanup locale è garantito)
         await authenticatedFetch(`${API_URL}/auth/logout`, {
             method: 'POST'
         });
     } catch (error) {
-        console.error('Logout error:', error);
+        console.warn('Errore durante la chiamata di logout al server, procedo con cleanup locale.', error);
     } finally {
         removeToken();
         showAlert('Logout effettuato con successo', 'success', 2000);
@@ -171,7 +194,10 @@ async function logout() {
     }
 }
 
+// =======================================================
 // ===== PROTEZIONE PAGINE =====
+// =======================================================
+
 function requireAuth() {
     if (!isAuthenticated()) {
         showAlert('Devi effettuare il login per accedere a questa pagina', 'warning');
@@ -194,7 +220,10 @@ function requireAdmin() {
     return true;
 }
 
-// ===== FORMATTAZIONE DATE =====
+// =======================================================
+// ===== FORMATTAZIONE DATA/ORA =====
+// =======================================================
+
 function formatDate(dateString) {
     const date = new Date(dateString);
     const options = { 
@@ -216,9 +245,13 @@ function formatDateShort(dateString) {
     });
 }
 
+// =======================================================
 // ===== VALIDAZIONE FORM =====
+// =======================================================
+
 function validateEmail(email) {
-    const re = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    // Ho mantenuto la regex più robusta del secondo blocco
+    const re = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/; 
     return re.test(email);
 }
 
@@ -226,7 +259,10 @@ function validatePassword(password) {
     return password.length >= 6;
 }
 
+// =======================================================
 // ===== LOADING SPINNER =====
+// =======================================================
+
 function showLoading(elementId) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -243,7 +279,11 @@ function hideLoading(elementId, originalText) {
     }
 }
 
-// ===== HAMBURGER MENU (Mobile) =====
+// =======================================================
+// ===== UTILITÀ VARIE =====
+// =======================================================
+
+// HAMBURGER MENU (Mobile) - Esecuzione all'avvio
 document.addEventListener('DOMContentLoaded', () => {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
@@ -253,9 +293,12 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('active');
         });
     }
+
+    // Esegui la verifica dello stato di autenticazione all'avvio (utile per la navbar)
+    checkAuthStatus();
 });
 
-// ===== DEBOUNCE =====
+// DEBOUNCE
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -268,7 +311,7 @@ function debounce(func, wait) {
     };
 }
 
-// ===== ESCAPE HTML =====
+// ESCAPE HTML
 function escapeHtml(text) {
     const map = {
         '&': '&amp;',
@@ -277,5 +320,5 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return String(text).replace(/[&<>"']/g, (m) => map[m]);
 }

@@ -1,6 +1,7 @@
 /* ===== PROFILE MAIN ===== */
 .profile-main {
-    background: #f7fafc;
+    /* Sfondo molto chiaro / quasi bianco */
+    background: #eaf3fd; /* Tonalità di blu molto tenue */
     min-height: calc(100vh - 140px);
     padding: 40px 0;
 }
@@ -27,34 +28,40 @@
 .profile-avatar {
     width: 120px;
     height: 120px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Gradiente blu/azzurro per l'avatar */
+    background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 48px;
     color: white;
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    /* Ombra blu coerente con il gradiente */
+    box-shadow: 0 4px 20px rgba(30, 136, 229, 0.3);
 }
 
 .profile-info h1 {
     font-size: 32px;
     font-weight: 800;
-    color: #2d3748;
+    /* Blu scuro per il testo principale */
+    color: #1a365d;
     margin-bottom: 8px;
 }
 
 .profile-info p {
     font-size: 16px;
-    color: #718096;
+    /* Blu grigiastro per i testi secondari */
+    color: #4a5568;
     margin-bottom: 12px;
 }
 
 .profile-role-badge {
     display: inline-block;
     padding: 6px 16px;
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
+    /* Sfondo blu chiaro/trasparente */
+    background: rgba(30, 136, 229, 0.1);
+    /* Testo blu primario */
+    color: #1e88e5;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 700;
@@ -64,7 +71,8 @@
 .profile-member-since {
     margin-top: 15px;
     font-size: 14px;
-    color: #a0aec0;
+    /* Grigio/blu molto tenue */
+    color: #718096;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -98,30 +106,39 @@
     align-items: center;
     gap: 12px;
     padding: 15px 25px;
-    color: #4a5568;
+    /* Testo grigio/blu scuro */
+    color: #2d3748;
     text-decoration: none;
     transition: all 0.3s;
     border-left: 3px solid transparent;
 }
 
 .profile-nav-link:hover {
-    background: #f7fafc;
-    color: #667eea;
+    /* Sfondo blu molto tenue */
+    background: #f0f8ff;
+    /* Colore primario blu */
+    color: #1e88e5;
 }
 
 .profile-nav-link.active {
-    background: rgba(102, 126, 234, 0.1);
-    color: #667eea;
-    border-left-color: #667eea;
+    /* Sfondo blu chiaro/trasparente */
+    background: rgba(30, 136, 229, 0.1);
+    /* Colore primario blu */
+    color: #1e88e5;
+    /* Bordo blu primario */
+    border-left-color: #1e88e5;
     font-weight: 600;
 }
 
 .profile-nav-link.danger {
+    /* Mantenuto rosso per la semantica di "pericolo" */
     color: #e53e3e;
 }
 
 .profile-nav-link.danger:hover {
-    background: rgba(245, 101, 101, 0.1);
+    /* Sfondo rosso chiaro/trasparente */
+    background: rgba(229, 62, 62, 0.1);
+    /* Bordo rosso */
     border-left-color: #e53e3e;
 }
 
@@ -161,13 +178,15 @@
 .section-header {
     margin-bottom: 35px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #e2e8f0;
+    /* Bordo grigio molto chiaro/bluastro */
+    border-bottom: 2px solid #e0e9f0;
 }
 
 .section-header h2 {
     font-size: 28px;
     font-weight: 800;
-    color: #2d3748;
+    /* Blu scuro per i titoli */
+    color: #1a365d;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -175,12 +194,14 @@
 }
 
 .section-header h2 i {
-    color: #667eea;
+    /* Icona blu primario */
+    color: #1e88e5;
 }
 
 .section-subtitle {
     font-size: 15px;
-    color: #718096;
+    /* Blu grigiastro per i sottotitoli */
+    color: #4a5568;
 }
 
 /* Forms */
@@ -195,7 +216,8 @@
 .form-group label {
     display: block;
     font-weight: 600;
-    color: #2d3748;
+    /* Blu scuro per le label */
+    color: #1a365d;
     margin-bottom: 10px;
     font-size: 14px;
     display: flex;
@@ -204,14 +226,16 @@
 }
 
 .form-group label i {
-    color: #667eea;
+    /* Icona blu primario */
+    color: #1e88e5;
 }
 
 .form-hint {
     display: block;
     margin-top: 8px;
     font-size: 13px;
-    color: #a0aec0;
+    /* Grigio/blu molto tenue */
+    color: #718096;
 }
 
 .password-input {
@@ -231,20 +255,23 @@
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #718096;
+    /* Blu grigiastro */
+    color: #4a5568;
     cursor: pointer;
     padding: 8px;
     transition: color 0.3s;
 }
 
 .toggle-password:hover {
-    color: #667eea;
+    /* Blu primario al passaggio del mouse */
+    color: #1e88e5;
 }
 
 /* Password Strength */
 .password-strength {
     height: 4px;
-    background: #e2e8f0;
+    /* Sfondo grigio/blu chiaro */
+    background: #e0e9f0;
     border-radius: 2px;
     margin-top: 10px;
     overflow: hidden;
@@ -264,6 +291,7 @@
     right: 0;
     top: -22px;
     font-size: 11px;
+    /* Blu grigiastro */
     color: #718096;
     font-weight: 600;
 }
@@ -276,7 +304,8 @@
 
 /* Security Card */
 .security-card {
-    background: #f7fafc;
+    /* Sfondo blu molto tenue */
+    background: #f0f8ff;
     border-radius: 12px;
     padding: 30px;
     margin-bottom: 25px;
@@ -285,7 +314,8 @@
 .security-card h3 {
     font-size: 20px;
     font-weight: 700;
-    color: #2d3748;
+    /* Blu scuro per i titoli */
+    color: #1a365d;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -293,12 +323,14 @@
 }
 
 .security-card h3 i {
-    color: #667eea;
+    /* Icona blu primario */
+    color: #1e88e5;
 }
 
 /* Preferences Card */
 .preferences-card {
-    background: #f7fafc;
+    /* Sfondo blu molto tenue */
+    background: #f0f8ff;
     border-radius: 12px;
     padding: 30px;
     margin-bottom: 25px;
@@ -307,7 +339,8 @@
 .preferences-card h3 {
     font-size: 18px;
     font-weight: 700;
-    color: #2d3748;
+    /* Blu scuro per i titoli */
+    color: #1a365d;
     margin-bottom: 20px;
 }
 
@@ -316,7 +349,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px 0;
-    border-bottom: 1px solid #e2e8f0;
+    /* Bordo grigio/blu chiaro */
+    border-bottom: 1px solid #e0e9f0;
 }
 
 .preference-item:last-child {
@@ -326,13 +360,15 @@
 .preference-item strong {
     display: block;
     font-size: 15px;
-    color: #2d3748;
+    /* Blu scuro */
+    color: #1a365d;
     margin-bottom: 5px;
 }
 
 .preference-item p {
     font-size: 13px;
-    color: #718096;
+    /* Blu grigiastro */
+    color: #4a5568;
 }
 
 /* Toggle Switch */
@@ -356,7 +392,8 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #cbd5e0;
+    /* Sfondo grigio/blu neutro */
+    background-color: #aebecd;
     transition: 0.4s;
     border-radius: 26px;
 }
@@ -374,7 +411,8 @@
 }
 
 input:checked + .slider {
-    background-color: #667eea;
+    /* Blu primario quando attivo */
+    background-color: #1e88e5;
 }
 
 input:checked + .slider:before {
@@ -383,8 +421,9 @@ input:checked + .slider:before {
 
 /* Danger Card */
 .danger-card {
-    background: rgba(245, 101, 101, 0.05);
-    border: 2px solid rgba(245, 101, 101, 0.2);
+    /* Mantenuto rosso per la semantica di "pericolo" */
+    background: rgba(229, 62, 62, 0.05);
+    border: 2px solid rgba(229, 62, 62, 0.2);
     border-radius: 12px;
     padding: 30px;
     display: flex;
@@ -396,13 +435,15 @@ input:checked + .slider:before {
 .danger-content h3 {
     font-size: 20px;
     font-weight: 700;
+    /* Rosso scuro */
     color: #e53e3e;
     margin-bottom: 10px;
 }
 
 .danger-content p {
     font-size: 14px;
-    color: #718096;
+    /* Blu grigiastro per i testi secondari */
+    color: #4a5568;
     line-height: 1.6;
 }
 
