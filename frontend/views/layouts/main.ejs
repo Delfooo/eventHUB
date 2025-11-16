@@ -9,6 +9,12 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <link rel="stylesheet" href="/css/notifications.css"> 
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <% if (typeof additionalCSS !== 'undefined') { %>
         <% additionalCSS.forEach(css => { %>
             <link rel="stylesheet" href="<%= css %>">
@@ -43,6 +49,25 @@
                         <i class="fas fa-shield-alt"></i> Admin
                     </a>
                     
+                    <div class="notification-bell-container">
+                        <button class="notification-bell" id="notificationBell">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge" id="notificationBadge">0</span>
+                        </button>
+
+                        <div class="notification-dropdown" id="notificationDropdown">
+                            <div class="notification-dropdown-header">
+                                <h3>Notifiche</h3>
+                                <button class="mark-all-read-btn" onclick="markAllNotificationsAsRead()">
+                                    Segna tutte lette
+                                </button>
+                            </div>
+                            <div class="notification-dropdown-body" id="notificationList">
+                                <p class="text-center mt-2" id="noNotificationsMessage" style="display: none;">Nessuna nuova notifica.</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <button class="btn btn-danger btn-sm" id="logoutBtn" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -83,6 +108,8 @@
 
     <script src="/js/auth.js"></script>
     <script src="/js/utils.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> 
+    <script src="/js/notifications.js"></script>
     
     <% if (typeof additionalJS !== 'undefined') { %>
         <% additionalJS.forEach(js => { %>
