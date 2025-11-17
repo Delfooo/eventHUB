@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="container">
             <a href="/" class="logo">
@@ -39,9 +39,7 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="admin-main">
-        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-header">
                 <div class="admin-badge">
@@ -82,12 +80,9 @@
             </div>
         </aside>
 
-        <!-- Content Area -->
         <div class="admin-content">
-            <!-- Alert Container -->
             <div id="alertContainer"></div>
 
-            <!-- SEZIONE PANORAMICA -->
             <section id="overview-section" class="admin-section active">
                 <div class="admin-section-header">
                     <div>
@@ -102,7 +97,6 @@
                     </button>
                 </div>
 
-                <!-- Stats Grid -->
                 <div class="admin-stats-grid">
                     <div class="admin-stat-card">
                         <div class="stat-header">
@@ -181,7 +175,6 @@
                     </div>
                 </div>
 
-                <!-- Additional Stats -->
                 <div class="additional-stats">
                     <div class="stat-box">
                         <i class="fas fa-calendar-plus"></i>
@@ -213,7 +206,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="quick-actions-admin">
                     <h2>Azioni Rapide</h2>
                     <div class="actions-grid-admin">
@@ -224,6 +216,10 @@
                         <button class="action-btn" onclick="switchSection('events')">
                             <i class="fas fa-calendar-check"></i>
                             <span>Modera Eventi</span>
+                        </button>
+                        <button class="action-btn" onclick="openEventModal()"> 
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Crea Nuovo Evento</span>
                         </button>
                         <button class="action-btn" onclick="exportData()">
                             <i class="fas fa-download"></i>
@@ -237,7 +233,6 @@
                 </div>
             </section>
 
-            <!-- SEZIONE GESTIONE UTENTI -->
             <section id="users-section" class="admin-section">
                 <div class="admin-section-header">
                     <div>
@@ -280,13 +275,11 @@
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
-                            <!-- Popolato dinamicamente -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- SEZIONE GESTIONE EVENTI -->
             <section id="events-section" class="admin-section">
                 <div class="admin-section-header">
                     <div>
@@ -307,11 +300,9 @@
                 </div>
 
                 <div id="eventsList" class="admin-events-list">
-                    <!-- Popolato dinamicamente -->
-                </div>
+                    </div>
             </section>
 
-            <!-- SEZIONE SEGNALAZIONI -->
             <section id="reports-section" class="admin-section">
                 <div class="admin-section-header">
                     <div>
@@ -332,7 +323,6 @@
                 </div>
             </section>
 
-            <!-- SEZIONE ANALYTICS -->
             <section id="analytics-section" class="admin-section">
                 <div class="admin-section-header">
                     <div>
@@ -354,7 +344,6 @@
         </div>
     </main>
 
-    <!-- Modal Conferma Azione -->
     <div id="confirmModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -371,16 +360,170 @@
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <div id="createEventModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crea Nuovo Evento</h3>
+                <button class="modal-close" onclick="closeEventModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createEventForm">
+                    <div class="form-group">
+                        <label for="eventTitle">
+                            <i class="fas fa-heading"></i> Titolo Evento
+                        </label>
+                        <input type="text" id="eventTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">
+                            <i class="fas fa-info-circle"></i> Descrizione
+                        </label>
+                        <textarea id="eventDescription" class="form-control" rows="3" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventImage">
+                            <i class="fas fa-image"></i> Immagine Evento
+                        </label>
+
+                        <div class="image-upload-zone" id="imageDropZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Trascina un'immagine qui o clicca per selezionare</p>
+                            <small>JPEG, PNG, GIF, WEBP - Max 5MB</small>
+                        </div>
+
+                        <input 
+                            type="file" 
+                            id="eventImageFile" 
+                            accept="image/*"
+                            style="display: none;"
+                        >
+
+                        <img id="imagePreview" class="image-preview" style="display: none;">
+
+                        <button type="button" class="btn btn-secondary mt-2" id="uploadImageBtn" disabled>
+                            <i class="fas fa-upload"></i> Carica Immagine
+                        </button>
+
+                        <input type="hidden" id="eventImage">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventDate">
+                            <i class="fas fa-calendar"></i> Data Evento
+                        </label>
+                        <input type="date" id="eventDate" class="form-control" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block mt-3">
+                        <i class="fas fa-plus-circle"></i> Crea Evento
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/js/utils.js"></script>
     <script src="/js/admin.js"></script>
     <script>
+        // Funzioni Modal Crea Evento
+        function openEventModal() {
+            document.getElementById('createEventModal').style.display = 'block';
+        }
+
+        function closeEventModal() {
+            document.getElementById('createEventModal').style.display = 'none';
+        }
+        
         // Verifica autenticazione e ruolo admin
         if (!requireAdmin()) {
             window.location.href = '/';
         } else {
             checkAuthStatus();
         }
+
+        // Logica per Drop Zone e Anteprima Immagine (Minimal Logic)
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropZone = document.getElementById('imageDropZone');
+            const fileInput = document.getElementById('eventImageFile');
+            const preview = document.getElementById('imagePreview');
+            const uploadBtn = document.getElementById('uploadImageBtn');
+
+            // 1. Clicca sulla Drop Zone
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // 2. Drag & Drop Events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+            });
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+
+            // 3. Gestione selezione file
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            function handleFiles(files) {
+                if (files.length > 0) {
+                    const file = files[0];
+                    if (file.size > 5 * 1024 * 1024) {
+                        showAlert('L\'immagine è troppo grande. Max 5MB.', 'error');
+                        fileInput.value = ''; // Resetta l'input file
+                        preview.style.display = 'none';
+                        preview.src = '';
+                        uploadBtn.disabled = true;
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        uploadBtn.disabled = false;
+                        dropZone.style.display = 'none';
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // 4. Reset del form (se necessario, da implementare in una funzione di reset)
+            function resetImageUpload() {
+                fileInput.value = '';
+                preview.src = '';
+                preview.style.display = 'none';
+                uploadBtn.disabled = true;
+                dropZone.style.display = 'flex';
+            }
+            
+            // Logica placeholder per il pulsante di upload (da connettere al tuo backend)
+            uploadBtn.addEventListener('click', () => {
+                showAlert('Funzione di Upload da connettere al Backend.', 'info');
+                // Qui andrebbe la logica per inviare il file al server e ottenere l'URL,
+                // che verrebbe poi inserito in: document.getElementById('eventImage').value = 'url_ottenuto';
+            });
+        });
     </script>
 </body>
 </html>
