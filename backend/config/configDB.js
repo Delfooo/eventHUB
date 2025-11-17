@@ -1,24 +1,26 @@
-/* Configurazione Database */ 
-const configDB = {
-  // Database
-  mongoUri: process.env.MONGODB_URI || 'mongodb+srv://michelangelodelfino_db_user:Jb2xqY6rtKySzhLL@eventhub.05x1kum.mongodb.net/eventhub?appName=eventHub',
+// configDB.js
+const mongoose = require('mongoose');
+const config = require('./connection'); 
 
-  // Server
-  port: process.env.PORT || 5000,
-  nodeEnv: process.env.NODE_ENV || 'development',
+/**
+ * Funzione per stabilire la connessione al database MongoDB.
+ */
+const connectDB = async () => {
+  try {
+    const connectionInstance = await mongoose.connect(config.mongoUri, { 
 
-  // CORS
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
-  // Rate limiting
-  rateLimitWindow: 15 * 60 * 1000, // 15 minuti
-  rateLimitMax: 100, // 100 richieste per finestra
-
-  // Upload
-  maxFileSize: 5 * 1024 * 1024, // 5MB
-
-  // Log
-  logLevel: process.env.LOG_LEVEL || 'info'
+    // Usa 'connectionInstance' per accedere all'host della connessione
+    console.log(`✅ MongoDB connesso con successo su host: **${connectionInstance.connection.host}**`);
+  } catch (error) {
+    // Connessione fallita
+    console.error(`❌ Errore critico di connessione a MongoDB: **${error.message}**`);
+    // Termina il processo con fallimento
+    process.exit(1);
+  }
 };
 
-module.exports = configDB;
+module.exports = connectDB;
